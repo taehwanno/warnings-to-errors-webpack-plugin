@@ -1,6 +1,7 @@
 {
   "name": "warnings-to-errors-webpack-plugin",
   "version": "1.0.0",
+  "description": "Change every warning as error to ensure safe build",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,6 +12,7 @@
     "url": "https://github.com/taehwanno/warnings-to-errors-webpack-plugin/issues"
   },
   "homepage": "https://github.com/taehwanno/warnings-to-errors-webpack-plugin",
+  "keywords": ["webpack", "plugin", "webpack-plugin"],
   "license": "MIT",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
