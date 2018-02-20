@@ -4,6 +4,7 @@
 
 - [Motivation](#motivation)
 - [Installation](#installation)
+- [Usage](#usage)
 - [License](#license)
 
 
@@ -32,7 +33,7 @@ This can happen especially if you use the `resolve.alias` option.
 export loadUserList = () => {}
 ```
 
-3. import `actions` in some file. warning :bug:
+3. import `actions` in some file. build result has a warning :bug:
 
 ```js
 // loadUserLists. Not a loadUserList.
