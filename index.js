@@ -2,7 +2,7 @@
 
 class WarningsToErrorsPlugin {
   apply(compiler) {
-    compiler.plugin('should-emit', (compilation) => {
+    compiler.hooks.shouldEmit.tap('WarningsToErrorsPlugin', (compilation) => {
       if (compilation.warnings.length > 0) {
         compilation.errors = compilation.errors.concat(compilation.warnings);
         compilation.warnings = [];

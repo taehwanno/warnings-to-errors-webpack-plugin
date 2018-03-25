@@ -46,6 +46,7 @@ describe('WarningsToErrorsPlugin', () => {
 
   it('should not have errors if there is no warning', (done) => {
     getStats({
+      mode: 'development',
       entry: './no-errors-and-warnings',
       plugins: [
         new WarningsToErrorsPlugin(),
@@ -59,6 +60,7 @@ describe('WarningsToErrorsPlugin', () => {
 
   it('should have errors if there is an warning', (done) => {
     getStats({
+      mode: 'development',
       entry: './resolve-alias-warnings',
       plugins: [
         new WarningsToErrorsPlugin(),
@@ -77,13 +79,14 @@ describe('WarningsToErrorsPlugin', () => {
 
   it('should have errors if there is an warning in child compilation', (done) => {
     getStats({
+      mode: 'development',
       entry: './no-errors-and-warnings',
       plugins: [
         {
           apply(compiler) {
-            compiler.plugin('make', (compilation, cb) => {
+            compiler.hooks.make.tapAsync('MakeChildCompilationWarnings', (compilation, cb) => {
               const child = compilation.createChildCompiler('child', {});
-              child.plugin('compilation', (childCompilation) => {
+              child.hooks.compilation.tap('MakeChildCompilationWarnings', (childCompilation) => {
                 childCompilation.warnings.push(new Error('child compilation'));
               });
               child.runAsChild(cb);
