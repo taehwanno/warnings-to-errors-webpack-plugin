@@ -1,0 +1,10 @@
+{
+  "name": "v2-3",
+  "version": "0.0.0",
+  "main": "index.spec.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "webpack": "2.2.0-rc.0"
+  }
+}
