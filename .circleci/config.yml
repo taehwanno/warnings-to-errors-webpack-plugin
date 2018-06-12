@@ -13,11 +13,18 @@ jobs:
           key: dependency-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependency
-          command: yarn install
+          command: |
+            yarn install
+            cd ./test
+            cd ./v2-3 && yarn install && cd ..
+            cd ./v4 && yarn install && cd ..
+            cd ..
       - save_cache:
           key: dependency-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
+            - ./test/v2-3/node_modules
+            - ./test/v4/node_modules
             - ~/.yarn-cache
       - run:
           name: Test

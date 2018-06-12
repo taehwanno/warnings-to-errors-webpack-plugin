@@ -1,9 +1,9 @@
 const path = require('path');
 const should = require('should');
 const webpack = require('webpack');
-const WarningsToErrorsPlugin = require('../');
+const WarningsToErrorsPlugin = require('../../');
 
-const base = path.join(__dirname, 'fixtures');
+const base = path.join(__dirname, '../fixtures');
 
 describe('WarningsToErrorsPlugin', () => {
   function customOutputFilesystem(c) {
