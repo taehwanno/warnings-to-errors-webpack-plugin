@@ -58,31 +58,46 @@ $ yarn add --dev warnings-to-errors-webpack-plugin
 
 ## Usage
 
+- **default**
+
 ```js
-{
+const WarningsToErrorsPlugin = require('warnings-to-errors-webpack-plugin');
+
+module.exports = {
+  // ...
   plugins: [
     new WarningsToErrorsPlugin(),
   ],
-}
+};
 ```
 
-- with [`NoEmitOnErrorsPlugin`](https://webpack.js.org/plugins/no-emit-on-errors-plugin/)
+- **with [`NoEmitOnErrorsPlugin`](https://webpack.js.org/plugins/no-emit-on-errors-plugin/)**
+
+Skip the emitting phase whenever there are warnings while compiling. This ensures that no assets are emitted that include warnings.
 
 ```js
-const { NoEmitOnErrorsPlugin } = require('webpack');
-const WarningsToErrorsPlugin = require('warnings-to-errors-webpack-plugin');
+// webpack >= v4
+{
+  optimization: {
+    noEmitOnErrors: true,
+  },
+  plugins: [
+    new WarningsToErrorsPlugin();
+  ],
+};
+```
 
+```js
+// webpack v2 and v3
 {
   plugins: [
     new WarningsToErrorsPlugin(),
     new NoEmitOnErrorsPlugin(),
   ],
-}
+};
 ```
-
-Skip the emitting phase whenever there are warnings while compiling. This ensures that no assets are emitted that include warnings.
 
 
 ## License
 
-MIT © [Taehwan, No](https://github.com/taehwanno)
+MIT © [Taehwan Noh](https://github.com/taehwanno)
