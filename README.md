@@ -30,7 +30,7 @@ This can happen especially if you use the `resolve.alias` option.
 
 ```js
 // app/state/actions.js
-export loadUserList = () => {}
+export const loadUserList = () => {}
 ```
 
 3. import `actions` in some file. build result has a warning :bug:
