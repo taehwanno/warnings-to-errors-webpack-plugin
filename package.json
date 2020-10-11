@@ -31,6 +31,6 @@
     "should": "^13.2.3"
   },
   "peerDependencies": {
-    "webpack": "^2.2.0-rc || ^3 || ^4"
+    "webpack": "^2.2.0-rc || ^3 || ^4 || ^5"
   }
 }
