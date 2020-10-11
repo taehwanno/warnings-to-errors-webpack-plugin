@@ -7,10 +7,9 @@
 - [Usage](#usage)
 - [License](#license)
 
-
 ## Motivation
 
-Even if build result with webpack has some warnings, build succeed with no error exit codes. This can be trouble if some developer carefully not sees the result of CI service. By changing warnings to errors, webpack can recognize every warning as errors.
+Even if build result with webpack has some warnings, build succeed with no error exit codes. This can be trouble if some developer not carefully sees the result of CI service. By changing warnings to errors, webpack can recognize every warning as errors.
 
 This can happen especially if you use the `resolve.alias` option.
 
