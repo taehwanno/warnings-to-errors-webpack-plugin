@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const WarningsToErrorsPlugin = require('../../');
 
 const base = path.join(__dirname, '../fixtures');
+const {flatten} = require('../utils')
 
 describe('WarningsToErrorsPlugin', () => {
   function customOutputFilesystem(c) {
@@ -41,76 +42,153 @@ describe('WarningsToErrorsPlugin', () => {
       callback(
         stats.errors,
         stats.warnings,
-        stats.children.map(child => child.errors),
-        stats.children.map(child => child.warnings),
+        flatten(stats.children.map(child => child.errors)),
+        flatten(stats.children.map(child => child.warnings)),
       );
     });
   }
 
-  it('should not have errors if there is no warning', (done) => {
-    getStats({
-      mode: 'development',
-      entry: './no-errors-and-warnings',
-      plugins: [
-        new WarningsToErrorsPlugin(),
-      ],
-    }, (errors, warnings) => {
-      errors.length.should.be.eql(0);
-      warnings.length.should.be.eql(0);
-      done();
+  describe('should have no errors and no warnings if:', () => {
+    it('there are no errors and no warnings', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './no-errors-and-warnings',
+        plugins: [
+          new WarningsToErrorsPlugin(),
+        ],
+      }, (errors, warnings) => {
+        errors.length.should.be.eql(0);
+        warnings.length.should.be.eql(0);
+        done();
+      });
     });
-  });
 
-  it('should have errors if there is an warning', (done) => {
-    getStats({
-      mode: 'development',
-      entry: './resolve-alias-warnings',
-      plugins: [
-        new WarningsToErrorsPlugin(),
-      ],
-      resolve: {
-        alias: {
-          file: path.join(__dirname, 'fixtures', 'file.js'),
-        },
-      },
-    }, (errors, warnings) => {
-      errors.length.should.be.eql(1);
-      warnings.length.should.be.eql(0);
-      done();
-    });
-  });
-
-  it('should have errors if there is an warning in child compilation', (done) => {
-    getStats({
-      mode: 'development',
-      entry: './no-errors-and-warnings',
-      plugins: [
-        {
-          apply(compiler) {
-            compiler.hooks.make.tapAsync('MakeChildCompilationWarnings', (compilation, cb) => {
-              const child = compilation.createChildCompiler('child', {});
-              child.hooks.compilation.tap('MakeChildCompilationWarnings', (childCompilation) => {
-                childCompilation.warnings.push(new Error('child compilation'));
+    it('there is a warning, but it\'s ignored using the "ignoreWarnings" config option', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './file',
+        plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tap('MakeCompilationWarning', (compilation) => {
+                compilation.warnings.push(new Error('This is a compilation warning'));
               });
-              child.runAsChild(cb);
-            });
-          }
+            }
+          },
+          new WarningsToErrorsPlugin(),
+        ],
+        ignoreWarnings: [{
+          message: /compilation warning/,
+        }],
+      }, (errors, warnings) => {
+        errors.length.should.be.eql(0);
+        warnings.length.should.be.eql(0);
+        done();
+      });
+    });
+
+    it('there is a warning in child compilation, but it\'s ignored using the "ignoreWarnings" config option', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './file',
+        plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tapAsync('MakeChildCompilationWarnings', (compilation, cb) => {
+                const child = compilation.createChildCompiler('child', {});
+                child.hooks.compilation.tap('MakeChildCompilationWarnings', (childCompilation) => {
+                  childCompilation.warnings.push(new Error('This is a warning in child compilation'));
+                });
+                child.runAsChild(cb);
+              });
+            }
+          },
+          new WarningsToErrorsPlugin(),
+        ],
+        ignoreWarnings: [{
+          message: /warning in child/,
+        }],
+      }, (errors, warnings, childrenErrors, childrenWarnings) => {
+        errors.length.should.be.eql(0);
+        warnings.length.should.be.eql(0);
+        childrenErrors.length.should.be.eql(0);
+        childrenWarnings.length.should.be.eql(0);
+        done();
+      });
+    });
+  });
+
+  describe('should have errors if:', () => {
+    it('there is an error', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './resolve-alias-warnings',
+        plugins: [
+          new WarningsToErrorsPlugin(),
+        ],
+        resolve: {
+          alias: {
+            file: path.join(__dirname, 'fixtures', 'file.js'),
+          },
         },
-        new WarningsToErrorsPlugin(),
-      ],
-      resolve: {
-        alias: {
-          file: path.join(__dirname, 'fixtures', 'file.js'),
+      }, (errors, warnings) => {
+        errors.length.should.be.eql(1);
+        warnings.length.should.be.eql(0);
+        done();
+      });
+    });
+
+    it('there is a warning', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './file',
+        plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tap('MakeCompilationWarning', (compilation) => {
+                compilation.warnings.push(new Error('This is a compilation warning'));
+              });
+            }
+          },
+          new WarningsToErrorsPlugin(),
+        ],
+      }, (errors, warnings) => {
+        errors.length.should.be.eql(1);
+        warnings.length.should.be.eql(0);
+        done();
+      });
+    });
+  
+    it('there is a warning in child compilation', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './file',
+        plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tapAsync('MakeChildCompilationWarnings', (compilation, cb) => {
+                const child = compilation.createChildCompiler('child', {});
+                child.hooks.compilation.tap('MakeChildCompilationWarnings', (childCompilation) => {
+                  childCompilation.warnings.push(new Error('child compilation'));
+                });
+                child.runAsChild(cb);
+              });
+            }
+          },
+          new WarningsToErrorsPlugin(),
+        ],
+        resolve: {
+          alias: {
+            file: path.join(__dirname, 'fixtures', 'file.js'),
+          },
         },
-      },
-    }, (errors, warnings, childrenErrors, childrenWarnings) => {
-      errors.length.should.be.eql(0);
-      warnings.length.should.be.eql(0);
-      childrenErrors.length.should.be.eql(1);
-      childrenErrors[0].length.should.be.eql(1);
-      childrenWarnings.length.should.be.eql(1);
-      childrenWarnings[0].length.should.be.eql(0);
-      done();
+      }, (errors, warnings, childrenErrors, childrenWarnings) => {
+        errors.length.should.be.eql(0);
+        warnings.length.should.be.eql(0);
+        childrenErrors.length.should.be.eql(1);
+        childrenWarnings.length.should.be.eql(0);
+        done();
+      });
     });
   });
 });
