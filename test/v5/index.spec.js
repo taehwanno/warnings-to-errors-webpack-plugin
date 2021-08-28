@@ -63,7 +63,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it("there is a warning, but it's ignored using the 'ignoreWarnings' config option", (done) => {
+    it("there is a warning in top-level compilation, but it's ignored using the 'ignoreWarnings' config option", (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -123,18 +123,20 @@ describe('WarningsToErrorsPlugin', () => {
   });
 
   describe('should have errors if:', () => {
-    it('there is an error', (done) => {
+    it('there is an error in top-level compilation', (done) => {
       getStats({
         mode: 'development',
-        entry: './resolve-alias-warnings',
+        entry: './file',
         plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tap('MakeCompilationWarning', (compilation) => {
+                compilation.errors.push(new Error('This is a compilation error'));
+              });
+            }
+          },
           new WarningsToErrorsPlugin(),
         ],
-        resolve: {
-          alias: {
-            file: path.join(__dirname, 'fixtures', 'file.js'),
-          },
-        },
       }, (errors, warnings) => {
         errors.length.should.be.eql(1);
         warnings.length.should.be.eql(0);
@@ -142,7 +144,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it('there is a warning', (done) => {
+    it('there is a warning in top-level compilation', (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -163,7 +165,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it('there is a error in child compilation', (done) => {
+    it('there is an error in child compilation', (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -208,11 +210,6 @@ describe('WarningsToErrorsPlugin', () => {
           },
           new WarningsToErrorsPlugin(),
         ],
-        resolve: {
-          alias: {
-            file: path.join(__dirname, 'fixtures', 'file.js'),
-          },
-        },
       }, (errors, warnings, childrenErrors, childrenWarnings) => {
         errors.length.should.be.eql(0);
         warnings.length.should.be.eql(0);
