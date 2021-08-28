@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const WarningsToErrorsPlugin = require('../../');
 
 const base = path.join(__dirname, '../fixtures');
-const {flatten} = require('../utils')
+const { flatten } = require('../utils')
 
 describe('WarningsToErrorsPlugin', () => {
   function customOutputFilesystem(c) {
@@ -63,7 +63,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it('there is a warning, but it\'s ignored using the "ignoreWarnings" config option', (done) => {
+    it("there is a warning, but it's ignored using the 'ignoreWarnings' config option", (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -77,9 +77,11 @@ describe('WarningsToErrorsPlugin', () => {
           },
           new WarningsToErrorsPlugin(),
         ],
-        ignoreWarnings: [{
-          message: /compilation warning/,
-        }],
+        ignoreWarnings: [
+          {
+            message: /compilation warning/,
+          },
+        ],
       }, (errors, warnings) => {
         errors.length.should.be.eql(0);
         warnings.length.should.be.eql(0);
@@ -87,7 +89,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it('there is a warning in child compilation, but it\'s ignored using the "ignoreWarnings" config option', (done) => {
+    it("there is a warning in child compilation, but it's ignored using the 'ignoreWarnings' config option", (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -105,9 +107,11 @@ describe('WarningsToErrorsPlugin', () => {
           },
           new WarningsToErrorsPlugin(),
         ],
-        ignoreWarnings: [{
-          message: /warning in child/,
-        }],
+        ignoreWarnings: [
+          {
+            message: /warning in child/,
+          }
+        ],
       }, (errors, warnings, childrenErrors, childrenWarnings) => {
         errors.length.should.be.eql(0);
         warnings.length.should.be.eql(0);
@@ -158,7 +162,7 @@ describe('WarningsToErrorsPlugin', () => {
         done();
       });
     });
-  
+
     it('there is a warning in child compilation', (done) => {
       getStats({
         mode: 'development',
