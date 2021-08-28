@@ -9,49 +9,14 @@
 
 ## Motivation
 
-Even if build result with webpack has some warnings, build succeed with no error exit codes. This can be trouble if some developer not carefully sees the result of CI service. By changing warnings to errors, webpack can recognize every warning as errors.
-
-This can happen especially if you use the `resolve.alias` option.
-
-1. webpack configuration
-
-```js
-{
-  resolve: {
-    alias: {
-      actions: 'app/state/actions.js'
-    }
-  }
-}
-```
-
-2. `resolve.alias` file code
-
-```js
-// app/state/actions.js
-export const loadUserList = () => {}
-```
-
-3. import `actions` in some file. build result has a warning :bug:
-
-```js
-// loadUserLists. Not a loadUserList.
-import { loadUserLists } from 'actions';
-
-// ...
-```
-
+Even if the build result with webpack has some warnings, the build can succeed with no error exit codes. This can be trouble if some developer not carefully sees the result of CI service. By changing all warnings to errors, webpack can recognize every warning as an error.
 
 ## Installation
 
 ```bash
-$ npm install --save-dev warnings-to-errors-webpack-plugin
-```
-
-Alternatively, using yarn.
-
-```bash
-$ yarn add --dev warnings-to-errors-webpack-plugin
+$ npm i -D warnings-to-errors-webpack-plugin
+# or
+$ yarn add -D warnings-to-errors-webpack-plugin
 ```
 
 
@@ -94,6 +59,24 @@ Skip the emitting phase whenever there are warnings while compiling. This ensure
     new NoEmitOnErrorsPlugin(),
   ],
 };
+```
+
+- **with [`ignoreWarnings`](https://webpack.js.org/configuration/other-options/#ignorewarnings)**
+
+This plugin ignores warnings that match `ignoreWarnings` without recognizing them as errors.
+
+```js
+// webpack v5
+{
+  plugins: [
+    new WarningsToErrorsPlugin(),
+  ],
+  ignoreWarnings: [
+    {
+      message: /compilation warning/,
+    },
+  ],
+}
 ```
 
 
