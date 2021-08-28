@@ -163,6 +163,33 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
+    it('there is a error in child compilation', (done) => {
+      getStats({
+        mode: 'development',
+        entry: './file',
+        plugins: [
+          {
+            apply(compiler) {
+              compiler.hooks.make.tapAsync('MakeChildCompilationWarnings', (compilation, cb) => {
+                const child = compilation.createChildCompiler('child', {});
+                child.hooks.compilation.tap('MakeChildCompilationWarnings', (childCompilation) => {
+                  childCompilation.errors.push(new Error('child compilation'));
+                });
+                child.runAsChild(cb);
+              });
+            }
+          },
+          new WarningsToErrorsPlugin(),
+        ],
+      }, (errors, warnings, childrenErrors, childrenWarnings) => {
+        errors.length.should.be.eql(0);
+        warnings.length.should.be.eql(0);
+        childrenErrors.length.should.be.eql(1);
+        childrenWarnings.length.should.be.eql(0);
+        done();
+      });
+    });
+
     it('there is a warning in child compilation', (done) => {
       getStats({
         mode: 'development',
