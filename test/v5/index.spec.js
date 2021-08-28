@@ -52,7 +52,7 @@ describe('WarningsToErrorsPlugin', () => {
     it('there are no errors and no warnings', (done) => {
       getStats({
         mode: 'development',
-        entry: './no-errors-and-warnings',
+        entry: './file',
         plugins: [
           new WarningsToErrorsPlugin(),
         ],

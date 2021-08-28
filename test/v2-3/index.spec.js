@@ -46,7 +46,7 @@ describe('WarningsToErrorsPlugin', () => {
 
   it('should not have errors if there is no warning', (done) => {
     getStats({
-      entry: './no-errors-and-warnings',
+      entry: './file',
       plugins: [
         new WarningsToErrorsPlugin(),
       ],
@@ -57,17 +57,20 @@ describe('WarningsToErrorsPlugin', () => {
     });
   });
 
-  it('should have errors if there is an warning', (done) => {
+  it('should have errors if there is an warning in top-level compilation', (done) => {
     getStats({
-      entry: './resolve-alias-warnings',
+      entry: './file',
       plugins: [
+        {
+          apply(compiler) {
+            compiler.plugin('make', (compilation, cb) => {
+              compilation.errors.push(new Error('compilation error'));
+              cb();
+            });
+          }
+        },
         new WarningsToErrorsPlugin(),
       ],
-      resolve: {
-        alias: {
-          file: path.join(__dirname, 'fixtures', 'file.js'),
-        },
-      },
     }, (errors, warnings) => {
       errors.length.should.be.eql(1);
       warnings.length.should.be.eql(0);
@@ -77,7 +80,7 @@ describe('WarningsToErrorsPlugin', () => {
 
   it('should have errors if there is an warning in child compilation', (done) => {
     getStats({
-      entry: './no-errors-and-warnings',
+      entry: './file',
       plugins: [
         {
           apply(compiler) {
@@ -92,11 +95,6 @@ describe('WarningsToErrorsPlugin', () => {
         },
         new WarningsToErrorsPlugin(),
       ],
-      resolve: {
-        alias: {
-          file: path.join(__dirname, 'fixtures', 'file.js'),
-        },
-      },
     }, (errors, warnings, childrenErrors, childrenWarnings) => {
       errors.length.should.be.eql(0);
       warnings.length.should.be.eql(0);
