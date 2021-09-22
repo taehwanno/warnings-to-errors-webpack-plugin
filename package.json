@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "Change every warning as error to ensure safe build",
   "main": "index.js",
+  "types": "typings.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/taehwanno/warnings-to-errors-webpack-plugin"
