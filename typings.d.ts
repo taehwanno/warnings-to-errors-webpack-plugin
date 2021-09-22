@@ -1,8 +1,8 @@
-import { Compiler } from "webpack";
+import { Compiler } from 'webpack';
 
 export = WarningsToErrorsPlugin;
 
 declare class WarningsToErrorsPlugin {
-    constructor();
-    apply(compiler: Compiler): void;
+  constructor();
+  apply(compiler: Compiler): void;
 }
