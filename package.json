@@ -1,6 +1,6 @@
 {
   "name": "warnings-to-errors-webpack-plugin",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Change every warning as error to ensure safe build",
   "main": "index.js",
   "types": "typings.d.ts",
