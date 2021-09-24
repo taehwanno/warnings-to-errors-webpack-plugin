@@ -3,8 +3,10 @@
 class WarningsToErrorsPlugin {
   apply(compiler) {
     if ('hooks' in compiler) {
+      // For webpack v4+
       compiler.hooks.shouldEmit.tap('WarningsToErrorsPlugin', (compilation) => this.handleHook(compiler, compilation));
     } else {
+      // For webpack v2, v3
       compiler.plugin('should-emit', (compilation) => this.handleHook(compiler, compilation));
     }
   }
