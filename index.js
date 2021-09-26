@@ -11,7 +11,7 @@ class WarningsToErrorsPlugin {
     }
   }
 
-  combineFilters(compiler) {
+  combineIgnores(compiler) {
     const ignoreWarnings = compiler.options.ignoreWarnings || [];
     const warningsFilter = (compiler.options.stats && compiler.options.stats.warningsFilter) || []
     return ignoreWarnings.concat(warningsFilter);
@@ -54,7 +54,7 @@ class WarningsToErrorsPlugin {
   }
 
   handleHook(compiler, compilation) {
-    const ignores = this.combineFilters(compiler);
+    const ignores = this.combineIgnores(compiler);
     const normalizedIgnores = this.normalizeIgnores(ignores);
 
     if (compilation.warnings.length > 0) {
