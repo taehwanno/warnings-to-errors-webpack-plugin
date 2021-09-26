@@ -1,7 +1,7 @@
 {
   "name": "warnings-to-errors-webpack-plugin",
   "version": "2.3.0",
-  "description": "Change every warning as error to ensure safe build",
+  "description": "webpack plugin that can recognize every warning as errors",
   "main": "index.js",
   "types": "typings.d.ts",
   "repository": {
