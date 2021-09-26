@@ -53,7 +53,7 @@ This plugin ignores warnings that are matched by `warningsFilter` or `ignoreWarn
 }
 ```
 
-If you use `ignoreWarnings` and `warningsFilter ` options at the same time in webpack v5, the plugin will ignore all matched warnings in both. but recommend using `ignoreWarnings`.
+If you use `ignoreWarnings` and `warningsFilter` options at the same time in webpack v5, the plugin will ignore all matched warnings in both. but recommend using `ignoreWarnings` only.
 
 ```js
 // webpack v5
