@@ -63,7 +63,7 @@ describe('WarningsToErrorsPlugin', () => {
       });
     });
 
-    it("there is a warning in top-level compilation, but it's ignored using the 'ignoreWarnings' config option", (done) => {
+    it("there is a warning in top-level compilation, but it's ignored using the 'ignoreWarnings' and 'stats.warningsFilter' config option", (done) => {
       getStats({
         mode: 'development',
         entry: './file',
@@ -71,7 +71,8 @@ describe('WarningsToErrorsPlugin', () => {
           {
             apply(compiler) {
               compiler.hooks.make.tap('MakeCompilationWarning', (compilation) => {
-                compilation.warnings.push(new Error('This is a compilation warning'));
+                compilation.warnings.push(new Error('This is a compilation warning 1'));
+                compilation.warnings.push(new Error('This is a compilation warning 2'));
               });
             }
           },
@@ -79,9 +80,14 @@ describe('WarningsToErrorsPlugin', () => {
         ],
         ignoreWarnings: [
           {
-            message: /compilation warning/,
+            message: /compilation warning 1/,
           },
         ],
+        stats: {
+          warningsFilter: [
+            /compilation warning 2/
+          ]
+        }
       }, (errors, warnings) => {
         errors.length.should.be.eql(0);
         warnings.length.should.be.eql(0);

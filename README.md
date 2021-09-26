@@ -35,9 +35,62 @@ module.exports = {
 };
 ```
 
+- **with [`warningsFilter`](https://webpack.js.org/configuration/stats/#statswarningsfilter) and [`ignoreWarnings`](https://webpack.js.org/configuration/other-options/#ignorewarnings)**
+
+This plugin ignores warnings that are matched by `warningsFilter` or `ignoreWarnings` without recognizing them as errors.
+
+```js
+// webpack v5
+{
+  plugins: [
+    new WarningsToErrorsPlugin(),
+  ],
+  ignoreWarnings: [
+    {
+      message: /compilation warning/,
+    },
+  ],
+}
+```
+
+If you use `ignoreWarnings` and `warningsFilter ` options at the same time in webpack v5, the plugin will ignore all matched warnings in both. but recommend using `ignoreWarnings`.
+
+```js
+// webpack v5
+{
+  plugins: [
+    new WarningsToErrorsPlugin(),
+  ],
+  ignoreWarnings: [
+    {
+      message: /compilation warning 1/,
+    },
+  ],
+  stats: {
+    warningsFilter: [
+      /compilation warning 2/,
+    ],
+  },
+}
+```
+
+```js
+// webpack v2, v3 and v4
+{
+  plugins: [
+    new WarningsToErrorsPlugin(),
+  ],
+  stats: {
+    warningsFilter: [
+      /compilation warning/,
+    ],
+  },
+}
+```
+
 - **with [`NoEmitOnErrorsPlugin`](https://webpack.js.org/plugins/no-emit-on-errors-plugin/)**
 
-Skip the emitting phase whenever there are warnings while compiling. This ensures that no assets are emitted that include warnings.
+Skip the emitting phase whenever there are warnings while compiling. this ensures that no assets are emitted that include warnings.
 
 ```js
 // webpack >= v4
@@ -60,25 +113,6 @@ Skip the emitting phase whenever there are warnings while compiling. This ensure
   ],
 };
 ```
-
-- **with [`ignoreWarnings`](https://webpack.js.org/configuration/other-options/#ignorewarnings)**
-
-This plugin ignores warnings that match `ignoreWarnings` without recognizing them as errors.
-
-```js
-// webpack v5
-{
-  plugins: [
-    new WarningsToErrorsPlugin(),
-  ],
-  ignoreWarnings: [
-    {
-      message: /compilation warning/,
-    },
-  ],
-}
-```
-
 
 ## License
 
